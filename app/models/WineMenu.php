@@ -33,6 +33,26 @@ class WineMenu extends SleepingOwlModel
 		return $this->belongsToMany('WineList', 'wine_menu', 'menu_id', 'wine_id')->orderBy('wine_id', 'desc');
 	}
 
+	public function likes()
+	{
+		return $this->belongsToMany('UserList', 'menu_likes', 'menu_id', 'user_id');
+	}
+
+	public function hasLiked()
+	{
+		if (!Auth::check())
+		{
+			return 0;
+		}
+
+		$mark = DB::table('menu_likes')
+					->where('menu_id', '=', $this->id)
+					->where('user_id', '=', Auth::id())
+					->count();
+
+		return $mark;
+	}
+
 	public function setWinesAttribute($wines)
 	{
 		$this->wines()->detach();

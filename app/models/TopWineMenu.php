@@ -75,21 +75,25 @@ class TopWineMenu extends SleepingOwlModel
 		$all = self::all()->take(10);
 		$data = array();
 		foreach ($all as $key => $row) {
-			$top_menus = $row->menu->wines->take(4);
+			$top_menus = $row->menu->wines->take(5);
 			$top_menus_data = array();
+			$menu = $row->menu;
+			$creator = $menu->creator;
 
 			foreach ($top_menus as $top_menu) {
 				$top_menus_data[] = $top_menu->wine_image;
 			}
 
 			$data[] = array(
-				'id' => $row->id,
-				'menu_id' => $row->menu_id,
-				'menu_name' => $row->menu->name,
-				'creator_id' => $row->menu->creator->id,
-				'creator_name' => $row->menu->creator->nickname,
-				'creator_image' => $row->menu->creator->image,
-				'menus' => $top_menus_data
+				'id' 			=> $row->id,
+				'menu_id' 		=> $row->menu_id,
+				'menu_name' 	=> $menu->name,
+				'creator_id' 	=> $creator->id,
+				'creator_name' 	=> $creator->nickname,
+				'creator_image' => $creator->image,
+				'like_num' 		=> $menu->likes()->count(),
+				'liked' 		=> $menu->hasLiked(),
+				'menus' 		=> $top_menus_data
 			);
 		}
 		return $data;

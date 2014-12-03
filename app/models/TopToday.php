@@ -86,6 +86,11 @@ class TopToday extends SleepingOwlModel implements ModelWithImageFieldsInterface
 		return Config::get('app.url') . '/images/' . self::$uploadPath . (string)$this->photo;
 	}
 
+	public function getCreatedAtAttribute($date)
+{
+    return Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $date)->format('Y年m月日');
+}
+
 	public static function appAll()
 	{
 		$all = self::all();
@@ -97,7 +102,7 @@ class TopToday extends SleepingOwlModel implements ModelWithImageFieldsInterface
 				'id' => $row->id,
 				'title' => $row->title,
 				'photo' => $row->image,
-				'desc' => $row->desc,
+				'date' => $row->created_at,
 				'link' => $row->link
 			);
 		}
