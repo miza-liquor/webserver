@@ -114,6 +114,21 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $respone;
 	}
 
+	public function likes()
+	{
+		return $this->belongsToMany('WineMenu', 'menu_likes', 'user_id', 'menu_id');
+	}
+
+	public static function appFind($uid)
+	{
+		$user = self::find($uid);
+		$user->followers = DB::table('user_followers')->where('user_id', '=', $uid)->count();
+		$user->following = DB::table('user_followers')->where('follower_id', '=', $uid)->count();
+		$user->likes = $user->likes()->count();
+
+		return $user;
+	}
+
 	public function getCoverAttribute($image)
 	{
 		return Config::get('app.url') . '/images/' . UserList::$uploadPath . $image;

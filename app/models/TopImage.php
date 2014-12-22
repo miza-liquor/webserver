@@ -30,7 +30,7 @@ class TopImage extends SleepingOwlModel implements ModelWithImageFieldsInterface
 
 	public function getImageUrlAttribute()
 	{
-		return '/images/' . self::$uploadPath . (string)$row->photo;
+		return Config::get('app.url') . '/images/' . self::$uploadPath . $this->photo;
 	}
 
 	public static function appAll()

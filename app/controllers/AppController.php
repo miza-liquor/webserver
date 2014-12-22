@@ -13,7 +13,7 @@ class AppController extends BaseController {
             $this->status = 400;
             $this->msg = 'login failed';
         } else {
-            $this->data['user'] = User::find(Auth::id());
+            $this->data['user'] = User::appFind(Auth::id());
             $this->data['top_image'] = TopImage::appAll();
             $this->data['top_menu'] = TopWineMenu::appAll();
         }
@@ -31,7 +31,7 @@ class AppController extends BaseController {
             $this->msg = '注册失败';
             $this->data = $registerError;
         } else {
-            $this->data['user'] = User::find(Auth::id());
+            $this->data['user'] = User::appFind(Auth::id());
             $this->data['top_image'] = TopImage::appAll();
             $this->data['top_menu'] = TopWineMenu::appAll();
         }
@@ -58,6 +58,55 @@ class AppController extends BaseController {
     public function topUser()
     {
         $this->data = TopUser::appAll();
+        return $this->response();
+    }
+
+    public function topbar()
+    {
+        $this->data = BarList::recommondBars(Auth::id());
+        return $this->response();
+    }
+
+    public function wineCategory()
+    {
+        $this->data = WineCategory::appAll();
+        return $this->response();
+    }
+
+    public function drinkedList()
+    {
+        $this->data = DrinkHistory::appDrinkHistory(Auth::id(), 1);
+        return $this->response();
+    }
+
+    public function drinkingList()
+    {
+        $this->data = DrinkHistory::appDrinkHistory(Auth::id(), 0);
+        return $this->response();
+    }
+
+    public function collection()
+    {
+        $this->data = Collection::appUserCollection(Auth::id());
+        return $this->response();
+    }
+
+    public function myMenu()
+    {
+        $this->data = WineMenu::appUserMenus(Auth::id());
+        return $this->response();
+    }
+
+    public function comments($category, $id)
+    {
+        $this->data = Comment::appComments($category, $id);
+        return $this->response();
+    }
+
+    public function postComment()
+    {
+        $post = Comment::post();
+        $this->data = Comment::appComments($post->category, $post->content_id);
         return $this->response();
     }
 

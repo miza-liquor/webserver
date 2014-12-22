@@ -87,9 +87,9 @@ class TopToday extends SleepingOwlModel implements ModelWithImageFieldsInterface
 	}
 
 	public function getCreatedAtAttribute($date)
-{
-    return Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $date)->format('Y年m月日');
-}
+	{
+    	return Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $date)->format('Y年m月日');
+	}
 
 	public static function appAll()
 	{

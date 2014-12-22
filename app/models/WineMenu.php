@@ -61,4 +61,42 @@ class WineMenu extends SleepingOwlModel
 
 		$this->wines()->attach($wines);
 	}
+
+	public function getAppMenuInfo()
+	{
+		$creator 	= $this->creator;
+		$top_menus 	= $this->wines->take(5);
+		$top_menus_data = array();
+
+		foreach ($top_menus as $top_menu) {
+			$top_menus_data[] = $top_menu->wine_image;
+		}
+		$data = array(
+			'id' 			=> $this->id,
+			'menu_id' 		=> $this->id,
+			'menu_name' 	=> $this->name,
+			'creator_id' 	=> $creator->id,
+			'creator_name' 	=> $creator->nickname,
+			'creator_image' => $creator->image,
+			'like_num' 		=> $this->likes()->count(),
+			'liked' 		=> $this->hasLiked(),
+			'wine_num'		=> $this->wines->count(),
+			'menus' 		=> $top_menus_data,
+			'menu_image'	=> count($top_menus_data) > 0 ? $top_menus_data[0] : ''
+		);
+
+		return $data;
+	}
+
+	public static function appUserMenus($uid)
+	{
+		$data = self::where('creator_id', '=', $uid)->get();
+		$response = array();
+
+		foreach ($data as $menu) {
+			$response[] = $menu->getAppMenuInfo();
+		}
+
+		return $response;
+	}
 }

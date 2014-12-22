@@ -20,7 +20,15 @@ Route::group(array('prefix' => '/v1/app'), function ()
 Route::group(array('prefix' => '/v1/app', 'before' => 'app.auth'), function()
 {
     // explore data, including general user info, homepage data, etc.
-    Route::get('explore',       array('as' => 'app_explore',        'uses' => 'AppController@explore'));
-    Route::get('topstory',      array('as' => 'app_top_story',      'uses' => 'AppController@topStory'));
-    Route::get('topuser',       array('as' => 'app_top_user',        'uses' => 'AppController@topUser'));
+    Route::get('explore',                   array('as' => 'app_explore',        'uses' => 'AppController@explore'));
+    Route::get('topstory',                  array('as' => 'app_top_story',      'uses' => 'AppController@topStory'));
+    Route::get('topuser',                   array('as' => 'app_top_user',       'uses' => 'AppController@topUser'));
+    Route::get('topbar',                    array('as' => 'app_topbar',         'uses' => 'AppController@topBar'));
+    Route::get('winecategory',              array('as' => 'app_winecategory',   'uses' => 'AppController@wineCategory'));
+    Route::get('drinked',                   array('as' => 'app_drinked',        'uses' => 'AppController@drinkedList'));
+    Route::get('drinking',                  array('as' => 'app_drinking',       'uses' => 'AppController@drinkingList'));
+    Route::get('collection',                array('as' => 'app_collection',     'uses' => 'AppController@collection'));
+    Route::get('mymenu',                    array('as' => 'app_mymenu',         'uses' => 'AppController@myMenu'));
+    Route::get('comments/{category}/{id}',  array('as' => 'app_comment',        'uses' => 'AppController@comments'));
+    Route::post('post/comment',             array('as' => 'app_post_comment',   'uses' => 'AppController@postComment'));
 });
