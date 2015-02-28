@@ -32,9 +32,14 @@ class UserList extends SleepingOwlModel implements ModelWithImageFieldsInterface
 		];
 	}
 
+	public function getNicknameAttribute($value)
+	{
+		return $value ? $value : $this->username;
+	}
+
 	public static function getList()
 	{
-		return static::lists('nickname', 'id');
+		return static::lists('email', 'id');
 	}
 
 	public function getImageAttribute()

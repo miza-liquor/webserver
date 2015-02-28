@@ -19,18 +19,16 @@ class WineList extends SleepingOwlModel implements ModelWithImageFieldsInterface
 		'creator_id',
 		'maker',
 		'image',
-		'desc'
+		'desc',
+		'status'
 	];
 
-	protected $hidden = [
-		'created_at',
-		'updated_at'
-	];
+	protected $hidden = [];
 
-	// public function scopeDefaultSort($query)
-	// {
-	// 	return $query->orderBy('id', 'DESC');
-	// }
+	public function scopeDefaultSort($query)
+	{
+		return $query->orderBy('wines.updated_at', 'DESC');
+	}
 
 	public function getImageFields()
 	{
@@ -51,7 +49,27 @@ class WineList extends SleepingOwlModel implements ModelWithImageFieldsInterface
 
 	public function creator()
 	{
-		return $this->belongsTo('UserList', 'creator_id');
+		return $this->belongsTo('User', 'creator_id');
+	}
+
+	public function menus()
+	{
+		return $this->belongsToMany('WineList', 'wine_menu', 'wine_id', 'menu_id');
+	}
+
+	public function drinked()
+	{
+		return $this->belongsToMany('User', 'drink_histories', 'wine_id', 'user_id')->where('drinked', '1');
+	}
+
+	public function drinking()
+	{
+		return $this->belongsToMany('User', 'drink_histories', 'wine_id', 'user_id')->where('drinked', '0');
+	}
+
+	public function alldrink()
+	{
+		return $this->belongsToMany('User', 'drink_histories', 'wine_id', 'user_id');
 	}
 
 	public function scopeWithoutCompanies($query)
@@ -62,6 +80,84 @@ class WineList extends SleepingOwlModel implements ModelWithImageFieldsInterface
 			return $query->whereRaw("id in (select `wine_id` from `wine_menu` where wine_id=wines.id and menu_id = $menu_id)");
 		}
 		return '';
+	}
+
+	public static function drink($wine_id, $type)
+	{
+		$wine = self::find($wine_id);
+		$data = array();
+
+		$drinklist = $type == 'drinked' ? $wine->drinked()->get() : $wine->drinking()->get();
+
+		foreach ($drinklist as $user) {
+			$data[] = User::appFind($user->id, $user);
+		}
+
+		return $data;
+	}
+
+	public static function appFind($wine_id, $wine = null)
+	{
+		$wine = $wine ? $wine : self::find($wine_id);
+		$wine->image = $wine->wine_image;
+		$wine->drinked = $wine->drinked()->count();
+		$wine->drinking = $wine->drinking()->count();
+		$wine->menus = $wine->menus()->count();
+		$wine->category_name = $wine->category()->first()->name;
+		$wine->country_name = $wine->country()->first()->c_name;
+		$wine->creator = User::appFind($wine->creator_id);
+
+		return $wine;
+	}
+
+	public static function search($uid, $keyword = null)
+	{
+		$keyword = trim($keyword);
+		$category = intval(Input::get('category'));
+		$search = new self;
+		$data = array();
+
+		$search = $search->where('status', '=', 0);
+		if ($category)
+		{
+			$search = $search->where('category_id', '=', $category);
+		}
+
+		if ($keyword)
+		{
+			$search = $search->where(function($query) use($keyword) {
+				$query->where('c_name', 'like', "%$keyword%")
+					  	->orWhere('c_name', 'like', "%$keyword%")
+					  	->orWhere('e_name', 'like', "%$keyword%")
+					  	->orWhere('maker', 'like', "%$keyword%");
+			});
+		}
+
+		$search = $search->take(50)->get();
+		foreach ($search as $item) {
+			$wine_info = self::appFind($item->id, $item);
+			$wine_info->drink_user = $wine_info->drinked()->get();
+			$data[] = $wine_info;
+		}
+
+		return $data;
+	}
+
+	public static function addToMenu()
+	{
+		Input::merge(array_map('trim', Input::all()));
+		$wine = self::find(Input::get('wine_id'));
+		$wine->menus()->sync([Input::get('menu_id')], false);
+	}
+
+	public static function postNewWine()
+	{
+		$wine = new WineList;
+		$wine->status = 1;
+		$wine->c_name = trim(Input::get('name'));
+        $wine->desc = trim(Input::get('desc'));
+        $wine->category_id = Auth::id();
+        
 	}
 
 	public static function getList()

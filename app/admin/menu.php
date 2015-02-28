@@ -33,7 +33,8 @@ Admin::menu()->label('用户管理')->icon('fa-user')->items(function(){
 
 Admin::menu()->label('酒库管理')->icon('fa-user')->items(function(){
 	Admin::menu('WineCategory')->icon('fa-user');
-	Admin::menu('WineList')->icon('fa-user');
+	// Admin::menu('WineList')->icon('fa-user');
+	Admin::menu('Wine')->icon('fa-user');
 	Admin::menu('Country')->icon('fa-user');
 });
 

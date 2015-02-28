@@ -58,6 +58,24 @@ class TopWine extends SleepingOwlModel
 		return $this->belongsTo('WineList', 'wine_id');
 	}
 
+	public static function appAll($category_id = null)
+	{
+		$data = array();
+		foreach (self::all() as $wine)
+		{
+			$wine = $wine->wine;
+
+			if ($category_id && $wine->category_id !== $category_id)
+			{
+				continue;
+			}
+
+			$data[] = WineList::appFind($wine->id, $wine);
+		}
+
+		return $data;
+	}
+
 	public static function getList()
 	{
 		$count = TopWine::all()->count();

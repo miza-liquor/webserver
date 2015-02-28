@@ -5,7 +5,7 @@ Admin::model('TopUser')->title('热门用户推荐管理')->columns(function ()
 	Column::string('ranking', '排名')->sortable(false);
 	Column::string('user_id', '用户编号')->sortable(false);
 	Column::string('user.nickname', '用户名称')->sortable(false);
-	Column::string('reasons', '推荐理由')->sortable(false);
+	Column::string('reasons_string', '推荐理由')->sortable(false);
 	Column::action('upgrade', '升级')->icon('fa-arrow-up')->style('long')->callback(function ($instance)
 	{
 		$instance->changeRanKingIndex($instance->ranking - 1, true);

@@ -5,7 +5,11 @@
  * @package  Laravel
  * @author   Taylor Otwell <taylorotwell@gmail.com>
  */
-
+$host = $_SERVER['SERVER_NAME'];
+if ($host !== 'zhangge.me') {
+    header('Location: http://zhangge.me');
+    exit();
+}
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader

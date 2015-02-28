@@ -57,38 +57,43 @@ class TopUser extends SleepingOwlModel
 
 	public function getReasonsAttribute()
 	{
-		$reaseans = array();
+		$reasons = array();
 
 		if ($this->reason_post)
 		{
-			array_push($reaseans, '发布最多');
+			array_push($reasons, '发布最多');
 		}
 		if ($this->reason_praise)
 		{
-			array_push($reaseans, '点赞最多');
+			array_push($reasons, '点赞最多');
 		}
 		if ($this->reason_be_praised)
 		{
-			array_push($reaseans, '被赞最多');
+			array_push($reasons, '被赞最多');
 		}
 		if ($this->reason_comment)
 		{
-			array_push($reaseans, '评论最多');
+			array_push($reasons, '评论最多');
 		}
 		if ($this->reason_checkin)
 		{
-			array_push($reaseans, '签到最多');
+			array_push($reasons, '签到最多');
 		}
 		if ($this->reason_be_collected)
 		{
-			array_push($reaseans, '被收藏最多');
+			array_push($reasons, '被收藏最多');
 		}
 		if ($this->reason_menu_master)
 		{
-			array_push($reaseans, '酒单大师');
+			array_push($reasons, '酒单大师');
 		}
 
-		return implode($reaseans, '<br />');
+		return $reasons;
+	}
+
+	public function getReasonsStringAttribute()
+	{
+		return implode($this->reasons, '<br />');
 	}
 
 	public function setRanKingAttribute($ranking)
@@ -98,7 +103,7 @@ class TopUser extends SleepingOwlModel
 
 	public function user()
 	{
-		return $this->belongsTo('UserList', 'user_id');
+		return $this->belongsTo('User', 'user_id');
 	}
 
 	public static function getList()
@@ -115,6 +120,19 @@ class TopUser extends SleepingOwlModel
 
 	public static function appAll()
 	{
-		
+		$all = self::where('id', '!=', Auth::id())->take(10)->get();
+		$list = array();
+
+		foreach ($all as $top_user) {
+			$user_info = User::appFind($top_user->user_id);
+			$reasons = $top_user->reasons;
+			$user_info->reasons = implode($reasons, '、');
+			$list[] = $user_info;
+		}
+
+		return array(
+			'本周最热10名用户推荐' => $list,
+			'历史排名前20酒神' => $list
+		);
 	}
 }

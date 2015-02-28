@@ -21,6 +21,12 @@ App::after(function($request, $response)
 	//
 });
 
+
+App::missing(function($exception)
+{
+	return Redirect::to('/404');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Authentication Filters

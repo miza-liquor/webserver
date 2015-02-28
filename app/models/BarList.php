@@ -63,6 +63,8 @@ class BarList extends SleepingOwlModel implements ModelWithImageFieldsInterface
 			'city' 		=> $this->city,
 			'address' 	=> $this->address,
 			'top_users' => $top_users,
+			'lon'		=> $this->location_lon,
+			'lat'		=> $this->location_lat,
 			'checkin_num' => $checkins->count()
 		);
 	}
